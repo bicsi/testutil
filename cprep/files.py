@@ -4,7 +4,7 @@ import glob
 import os 
 
 
-KINDS = ['generator', 'validator', 'solution', 'tests']
+KINDS = ['generator', 'validator', 'solution', 'tests', 'checker']
 
 
 def _discover(patterns, base_dir="", **kwargs):

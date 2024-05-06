@@ -1,4 +1,5 @@
 import subprocess
+import tempfile
 from .base import EvalResult, File
 from .config import ProblemConfig
 from typing import Optional
@@ -8,7 +9,26 @@ import os
 
 def check_output(input: str, output: str, answer: str,
                  checker_file: Optional[File] = None):
-    assert checker_file is None, "Checkers are not supported."
+    if checker_file is not None:
+        try:
+            # write input, output and answer in tempfiles, run the
+            # checker and get result.
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                input_file = f"{tmpdirname}/input"
+                output_file = f"{tmpdirname}/output"
+                answer_file = f"{tmpdirname}/answer"
+                open(input_file, "wb").write(input)
+                open(output_file, "wb").write(output)
+                open(answer_file, "wb").write(answer)
+
+                checker_result = subprocess.run(
+                    [checker_file.exec_path, input_file, output_file, answer_file],
+                    check=True,
+                    capture_output=True
+                ).stdout
+                return any([i in checker_result for i in [b"ok", b"Ok", b"OK"]])
+        except:
+            assert False, 'Checker did not return result.'
 
     output = output.splitlines()
     answer = answer.splitlines()

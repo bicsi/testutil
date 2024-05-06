@@ -42,6 +42,9 @@ discovery:
   - pattern: "sol*.cpp"
     kind: solution
 
+  - pattern: "check*.cpp"
+    kind: checker
+
   - pattern: "{problem}-gen*.cpp"
     kind: generator
   - pattern: "{problem}_gen*.cpp"
